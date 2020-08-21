@@ -1,5 +1,4 @@
-# Default ignored files
-/shelf/
-/workspace.xml
+# intellij and gradle ignore files
+.idea/workspace.xml
 .gradle/6.1.1/executionHistory/*
 

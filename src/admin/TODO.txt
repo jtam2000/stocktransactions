@@ -1,0 +1,2 @@
+As part of learning Kafka
+Create a Stock Transaction application to

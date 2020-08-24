@@ -1,9 +1,17 @@
 plugins {
     id 'java'
+    id 'application'
 }
 
-group 'com.github.jtam2000'
-version '1.0.1'
+group = 'com.github.jtam2000'
+version = '1.0.1'
+mainClassName = "${group}.package1.HelloWorld"
+
+ext {
+    groupPrefix = "${group}"
+    mainClassName2 = "${group}.package2.HelloWorldTwo"
+
+}
 
 repositories {
     mavenCentral()
@@ -26,4 +34,39 @@ dependencies {
             'org.apache.kafka:kafka-clients:0.10.0.1',
             'org.slf4j:slf4j-nop:1.7.25',
             'io.confluent:kafka-avro-serializer:5.3.0'
+}
+
+jar {
+    manifest {
+        attributes(
+                'Main-Class': "${mainClassName}"
+        )
+    }
+}
+
+application {
+    mainClassName = "${mainClassName}"
+}
+
+task runApp2(type: JavaExec) {
+
+    description = "Run the second app"
+    classpath = sourceSets.main.runtimeClasspath
+    main = "${groupPrefix}.package2.HelloWorldTwo"
+}
+
+task avroSchemaGenCode(type: Exec) {
+
+    description = "Generate Java files for Avro Schema changes"
+
+    def AVRO_TOOl = '/usr/local/bin/avro-tools'
+    def PROJ_AVRO_ROOT = 'src/main/resources/avro'
+    def PROJ_AVRO_JAVA_CODE_DIR = 'src/main/java'
+    def schema_file = "$PROJ_AVRO_ROOT/avroSchema.avsc"
+
+    inputs.file(schema_file)
+
+    commandLine "$AVRO_TOOl", "compile", "schema",
+            "$schema_file",
+            "$PROJ_AVRO_JAVA_CODE_DIR"
 }
